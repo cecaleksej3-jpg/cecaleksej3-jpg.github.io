@@ -1,0 +1,120 @@
+---
+// Страница с источниками (авторами дневников)
+import Navbar from '../components/Navbar.astro';
+import Sidebar from '../components/Sidebar.astro';
+import '../styles/global.css';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+// Определение типов для TypeScript
+interface Point {
+  title: string;
+  lat: number;
+  lng: number;
+  date: string;
+  quote: string;
+  context: string;
+  author: string;
+  author_link: string;
+  type?: string;
+}
+
+interface DataFile {
+  points: Point[];
+}
+
+// Загрузка и группировка данных по авторам
+function getAllSourcesData() {
+  try {
+    // Читаем JSON файл с данными точек
+    const dataPath = join(process.cwd(), 'public', 'data', 'points.json');
+    const fileContent = readFileSync(dataPath, 'utf-8');
+    const data: DataFile = JSON.parse(fileContent);
+    
+    // Группируем записи по авторам используя Map
+    const authorMap = new Map<string, {
+      author: string;
+      author_link: string;
+      points: Point[];
+    }>();
+    
+    if (data.points && Array.isArray(data.points)) {
+      data.points.forEach(point => {
+        if (!authorMap.has(point.author)) {
+          authorMap.set(point.author, {
+            author: point.author,
+            author_link: point.author_link,
+            points: []
+          });
+        }
+        authorMap.get(point.author)!.points.push(point);
+      });
+    }
+    
+    return Array.from(authorMap.values());
+  } catch (error) {
+    console.error('Ошибка при загрузке данных источников:', error);
+    return [];
+  }
+}
+
+const sources = getAllSourcesData();
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Источники - Фронтовые Дневники ВОВ</title>
+    <meta name="description" content="Полный список авторов дневников и их записей">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  </head>
+  <body>
+    <Navbar />
+    <Sidebar />
+    <main>
+      <div class="page-container">
+        <div class="container">
+          <h1 class="page-title">📚 Источники</h1>
+          
+          <div class="sources-grid">
+            {sources.map(source => (
+              <div class="source-card">
+                <h3>{source.author}</h3>
+                <a href={source.author_link} class="author-link" target="_blank">
+                  👤 Профиль "Прожито"
+                </a>
+                <p class="source-count">
+                  💬 Записей: <strong>{source.points.length}</strong>
+                </p>
+                
+                <div class="quotes-list">
+                  {source.points.map(point => (
+                    <div class="quote-item">
+                      <div class="date">
+                        📅 {new Date(point.date).toLocaleDateString('ru-RU', { 
+                          year: 'numeric', 
+                          month: 'long', 
+                          day: 'numeric' 
+                        })}
+                      </div>
+                      <div class="location">📍 {point.title}</div>
+                      <div class="text">
+                        "{point.quote.substring(0, 100)}{point.quote.length > 100 ? '...' : ''}"
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div class="back-button">
+            <a href="/" class="button">← Вернуться к карте</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

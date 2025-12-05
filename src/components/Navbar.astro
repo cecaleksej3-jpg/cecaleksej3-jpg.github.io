@@ -1,0 +1,60 @@
+---
+// Компонент навигационной панели
+---
+
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <div class="navbar-content">
+      <h1 class="navbar-title">📜 Фронтовые Дневники</h1>
+      <div class="navbar-actions">
+        <button class="toggle-navbar" id="toggle-navbar" aria-label="Свернуть/развернуть шапку" title="Свернуть шапку">▲</button>
+        <a href="/all-sources" class="sources-link">📚 Все источники</a>
+        <button class="hamburger" id="hamburger" aria-label="Открыть меню">☰</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Кнопка для разворачивания navbar когда он свернут -->
+<button class="show-navbar" id="show-navbar" aria-label="Показать шапку" title="Показать шапку" style="display: none;">▼</button>
+
+<script>
+  // Получаем элементы для работы с меню
+  const hamburger = document.getElementById('hamburger');
+  const sidebar = document.getElementById('sidebar');
+  const navbar = document.getElementById('navbar');
+  const toggleNavbar = document.getElementById('toggle-navbar');
+  const showNavbar = document.getElementById('show-navbar');
+  const mapContainer = document.querySelector('.map-container');
+  
+  // Обработка сворачивания/разворачивания navbar
+  if (navbar && toggleNavbar && showNavbar && mapContainer) {
+    toggleNavbar.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navbar.classList.add('hidden');
+      showNavbar.style.display = 'flex';
+      mapContainer.classList.add('fullscreen');
+    });
+
+    showNavbar.addEventListener('click', () => {
+      navbar.classList.remove('hidden');
+      showNavbar.style.display = 'none';
+      mapContainer.classList.remove('fullscreen');
+    });
+  }
+  
+  if (hamburger && sidebar) {
+    // При клике на кнопку меню переключаем класс 'open' у боковой панели
+    hamburger.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+
+    // Закрываем боковую панель если кликнули вне её области
+    document.addEventListener('click', (e) => {
+      const target = e.target as Node;
+      if (!sidebar.contains(target) && !hamburger.contains(target)) {
+        sidebar.classList.remove('open');
+      }
+    });
+  }
+</script>

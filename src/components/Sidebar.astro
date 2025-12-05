@@ -1,0 +1,25 @@
+---
+// Компонент боковой панели с меню
+---
+
+<aside class="sidebar" id="sidebar">
+  <button class="sidebar-close" id="sidebar-close" aria-label="Закрыть меню">✕</button>
+  <div class="sidebar-content">
+    <h2>Меню</h2>
+    <p>Изучайте дневники фронтовиков Великой Отечественной войны. Каждая метка на карте — это реальная история, реальные люди.</p>
+    <a href="/sources">📚 Смотреть все источники</a>
+  </div>
+</aside>
+
+<script>
+  // Получаем элементы для работы с закрытием боковой панели
+  const sidebarClose = document.getElementById('sidebar-close');
+  const sidebar = document.getElementById('sidebar');
+  
+  if (sidebarClose && sidebar) {
+    // При клике на кнопку закрытия убираем класс 'open'
+    sidebarClose.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+    });
+  }
+</script>
