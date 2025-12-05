@@ -81,6 +81,16 @@ import '../styles/global.css';
         const infoBadgeClose = document.getElementById('info-badge-close');
         
         if (splashScreen && splashButton) {
+          // Блокируем свайпы на splash screen чтобы не взаимодействовать с картой
+          splashScreen.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+          }, { passive: false });
+          
+          splashScreen.addEventListener('touchmove', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }, { passive: false });
+          
           // При клике на кнопку запускаем анимацию скрытия
           splashButton.addEventListener('click', () => {
             splashScreen.classList.add('fade-out');
@@ -207,6 +217,8 @@ import '../styles/global.css';
         z-index: 10000;
         opacity: 1;
         transition: opacity 1s ease-out;
+        touch-action: none; /* Блокируем touch события */
+        overflow: hidden; /* Предотвращаем прокрутку */
       }
 
       .splash-screen.fade-out {
