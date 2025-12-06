@@ -68,6 +68,12 @@ import { SITE_VERSION } from '../config';
           </div>
         </div>
         
+        <!-- Информация о добавлении контента -->
+        <div class="info-notice">
+          <p class="info-icon">📝</p>
+          <p class="info-message">Информация всё ещё добавляется</p>
+        </div>
+
         <!-- Желтая плашка с предупреждением -->
         <div class="splash-disclaimer">
           <p class="disclaimer-text">⚠️ Исключительно для учебных целей</p>
@@ -756,6 +762,56 @@ import { SITE_VERSION } from '../config';
         font-size: 18px;
       }
 
+      /* Info Notice Styles */
+      .info-notice {
+        margin: 20px auto;
+        padding: 14px 20px;
+        background: linear-gradient(135deg, rgba(139, 157, 111, 0.3) 0%, rgba(85, 107, 47, 0.2) 100%);
+        border: 2px solid rgba(139, 157, 111, 0.5);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        max-width: 400px;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .info-icon {
+        font-size: 24px;
+        margin: 0;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .info-message {
+        font-size: 15px;
+        font-weight: 500;
+        color: #F5F5DC;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
       /* Responsive adjustments */
       @media (max-width: 768px) {
         .mobile-warning {
@@ -773,6 +829,20 @@ import { SITE_VERSION } from '../config';
 
         .info-line {
           font-size: 13px;
+        }
+
+        .info-notice {
+          padding: 12px 18px;
+          margin: 15px auto;
+          max-width: calc(100% - 30px);
+        }
+
+        .info-icon {
+          font-size: 22px;
+        }
+
+        .info-message {
+          font-size: 14px;
         }
 
         .contacts-toggle {
@@ -815,6 +885,22 @@ import { SITE_VERSION } from '../config';
         .info-line {
           font-size: 12px;
           margin: 6px 0;
+        }
+
+        .info-notice {
+          padding: 10px 15px;
+          margin: 12px auto;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .info-icon {
+          font-size: 20px;
+        }
+
+        .info-message {
+          font-size: 13px;
+          text-align: center;
         }
 
         .landing-divider-small {

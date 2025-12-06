@@ -6,6 +6,50 @@ import '../styles/global.css';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
+// Функция форматирования дат
+function formatDate(dateString: string): string {
+  if (!dateString) return 'Дата неизвестна';
+
+  const [year, month, day] = dateString.split('-').map(Number);
+
+  if (!year) return 'Дата неизвестна';
+
+  if (month === 0 && day === 0) {
+    return `${year} год`;
+  }
+
+  if (day === 0) {
+    const monthNames = [
+      'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+      'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    ];
+    
+    if (month < 1 || month > 12) {
+      return `${year} год`;
+    }
+
+    return `${monthNames[month - 1]} ${year} года`;
+  }
+
+  try {
+    const date = new Date(year, month - 1, day);
+    
+    if (isNaN(date.getTime())) {
+      return `${year} год`;
+    }
+
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+
+    return new Intl.DateTimeFormat('ru-RU', options).format(date);
+  } catch {
+    return `${year} год`;
+  }
+}
+
 // Типы данных для TypeScript
 interface Point {
   title: string;
@@ -23,6 +67,20 @@ interface DataFile {
   points: Point[];
 }
 
+// Функция для получения ссылки на запись или профиль
+function getEntryLink(point: Point): string {
+  // Если у записи есть ссылка на запись (формат https://corpus.prozhito.org/note/{number})
+  if (point.author_link && point.author_link.includes('/note/')) {
+    return point.author_link;
+  }
+  // Если это ссылка на профиль (формат https://corpus.prozhito.org/person/{number})
+  if (point.author_link && point.author_link.includes('/person/')) {
+    return point.author_link;
+  }
+  // По умолчанию возвращаем author_link
+  return point.author_link;
+}
+
 // Функция загрузки и группировки данных по авторам
 // Используем readFileSync для чтения во время сборки проекта
 function getAllSourcesData() {
@@ -35,7 +93,6 @@ function getAllSourcesData() {
     // Создаем Map для группировки записей по авторам
     const authorMap = new Map<string, {
       author: string;
-      author_link: string;
       points: Point[];
     }>();
     
@@ -46,7 +103,6 @@ function getAllSourcesData() {
           // Если автор встречается впервые, создаем для него запись
           authorMap.set(point.author, {
             author: point.author,
-            author_link: point.author_link,
             points: []
           });
         }
@@ -98,22 +154,12 @@ const totalPoints = sources.reduce((sum, s) => sum + s.points.length, 0);
               <span class="entry-count">{source.points.length} {source.points.length === 1 ? 'запись' : source.points.length < 5 ? 'записи' : 'записей'}</span>
             </div>
             
-            <div class="source-link-container">
-              <a href={source.author_link} target="_blank" rel="noopener noreferrer" class="source-link">
-                🔗 Читать полный дневник на сайте Прожито
-              </a>
-            </div>
-
             <div class="entries">
               {source.points.map((point) => (
                 <div class={`entry entry-${point.type || 'default'}`}>
                   <div class="entry-meta">
                     <span class="entry-location">{point.title}</span>
-                    <span class="entry-date">{new Date(point.date).toLocaleDateString('ru-RU', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}</span>
+                    <span class="entry-date">{formatDate(point.date)}</span>
                   </div>
                   <blockquote class="entry-quote">
                     "{point.quote}"
@@ -121,6 +167,11 @@ const totalPoints = sources.reduce((sum, s) => sum + s.points.length, 0);
                   <p class="entry-context">
                     <strong>Контекст:</strong> {point.context}
                   </p>
+                  <div class="entry-link">
+                    <a href={getEntryLink(point)} target="_blank" rel="noopener noreferrer" class="read-link">
+                      🔗 Читать на Прожито
+                    </a>
+                  </div>
                 </div>
               ))}
             </div>
@@ -322,6 +373,33 @@ const totalPoints = sources.reduce((sum, s) => sum + s.points.length, 0);
     color: var(--color-khaki-dark);
   }
 
+  .entry-link {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .read-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, var(--color-khaki) 0%, var(--color-khaki-dark) 100%);
+    color: #F5F5DC;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid var(--color-khaki-dark);
+  }
+
+  .read-link:hover {
+    background: linear-gradient(135deg, var(--color-khaki-dark) 0%, #8B9D6F 100%);
+    box-shadow: 0 2px 8px rgba(85, 107, 47, 0.3);
+    transform: translateX(2px);
+  }
+
   .back-link {
     display: flex;
     justify-content: center;
@@ -400,6 +478,11 @@ const totalPoints = sources.reduce((sum, s) => sum + s.points.length, 0);
 
     .entry-context {
       font-size: 12px;
+    }
+
+    .read-link {
+      font-size: 12px;
+      padding: 7px 12px;
     }
   }
 </style>

@@ -28,7 +28,7 @@ import '../styles/global.css';
         <div class="info-badge-content">
           <span class="info-icon">🤖</span>
           <div class="info-text">
-            <p class="info-ai">Создано с использованием ИИ<br><span class="badge-version">v1.0.4</span></p>
+            <p class="info-ai">Создано с использованием ИИ<br><span class="badge-version">{SITE_VERSION}</span></p>
             <p class="info-source">Исторические данные: <a href="https://corpus.prozhito.org/" target="_blank" rel="noopener noreferrer">corpus.prozhito.org</a></p>
           </div>
         </div>
@@ -53,12 +53,56 @@ import '../styles/global.css';
 
       // Основная функция для инициализации карты
       async function initializeMap() {
+        // Функция форматирования даты
+        function formatDate(dateString) {
+          if (!dateString) return 'Дата неизвестна';
+
+          const [year, month, day] = dateString.split('-').map(Number);
+
+          if (!year) return 'Дата неизвестна';
+
+          if (month === 0 && day === 0) {
+            return `${year} год`;
+          }
+
+          if (day === 0) {
+            const monthNames = [
+              'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+              'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+            ];
+            
+            if (month < 1 || month > 12) {
+              return `${year} год`;
+            }
+
+            return `${monthNames[month - 1]} ${year} года`;
+          }
+
+          try {
+            const date = new Date(year, month - 1, day);
+            
+            if (isNaN(date.getTime())) {
+              return `${year} год`;
+            }
+
+            const options = {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            };
+
+            return new Intl.DateTimeFormat('ru-RU', options).format(date);
+          } catch {
+            return `${year} год`;
+          }
+        }
+        
         // Подгружаем библиотеку Leaflet динамически
         const L = (await import('leaflet')).default;
         
-        // Создаем карту с центром на Санкт-Петербурге и масштабом 11
+        // Создаем карту с центром на Санкт-Петербурге и масштабом 6
         // Координаты: широта 59.9343, долгота 30.3351
-        const map = L.map('map').setView([59.9343, 30.3351], 11);
+        const map = L.map('map').setView([59.9343, 30.3351], 6);
         
         // Добавляем слой OpenStreetMap (бесплатные карты)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -108,7 +152,7 @@ import '../styles/global.css';
               const popupContent = `
                 <div class="marker-popup">
                   <h3>${point.title}</h3>
-                  <div class="date">${new Date(point.date).toLocaleDateString('ru-RU')}</div>
+                  <div class="date">${formatDate(point.date)}</div>
                   <div class="quote">"${point.quote}"</div>
                   <div class="context">${point.context}</div>
                   <div class="author">

@@ -1,7 +1,7 @@
 {
   "name": "cecaleksej3-jpg.github.io",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "Интерактивная карта дневников фронтовиков Великой Отечественной войны",
   "scripts": {
     "dev": "astro dev",
