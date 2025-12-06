@@ -81,20 +81,15 @@ import '../styles/global.css';
         const infoBadgeClose = document.getElementById('info-badge-close');
         
         if (splashScreen && splashButton) {
-          // Блокируем взаимодействие с картой под splash screen
-          // Но разрешаем прокрутку внутри splash-content
-          splashScreen.addEventListener('touchmove', (e) => {
-            // Разрешаем прокрутку внутри .splash-content
-            const target = e.target as HTMLElement;
-            const splashContent = target?.closest('.splash-content');
-            if (!splashContent) {
-              e.preventDefault();
-            }
-          }, { passive: false });
+          // Блокируем прокрутку body когда splash screen открыт
+          document.body.style.overflow = 'hidden';
           
           // При клике на кнопку запускаем анимацию скрытия
           splashButton.addEventListener('click', () => {
             splashScreen.classList.add('fade-out');
+            
+            // Возвращаем прокрутку body
+            document.body.style.overflow = '';
             
             // Убираем элемент из DOM после завершения анимации (1 секунда)
             setTimeout(() => {
@@ -210,17 +205,16 @@ import '../styles/global.css';
         top: 0;
         left: 0;
         width: 100%;
-        height: 100vh;
+        height: 100%;
+        min-height: 100vh;
         background: linear-gradient(135deg, #8B9D6F 0%, #556B2F 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
         z-index: 10000;
         opacity: 1;
         transition: opacity 1s ease-out;
-        overflow-y: auto; /* Разрешаем вертикальную прокрутку */
+        overflow-y: auto;
         overflow-x: hidden;
-        -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain; /* Предотвращаем прокрутку body */
       }
 
       .splash-screen.fade-out {
@@ -230,11 +224,14 @@ import '../styles/global.css';
       .splash-content {
         text-align: center;
         color: #F5F5DC;
-        padding: 40px;
+        padding: 40px 20px;
         max-width: 800px;
+        margin: 0 auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         animation: fadeInUp 1s ease-out;
-        margin: auto; /* Центрируем при прокрутке */
-        min-height: min-content; /* Подстраиваем под контент */
       }
 
       @keyframes fadeInUp {
@@ -506,13 +503,12 @@ import '../styles/global.css';
       }
 
       @media (max-width: 480px) {
-        .splash-screen {
-          align-items: flex-start; /* Начинаем сверху на мобильных */
-          padding: 20px 0; /* Добавляем отступы */
-        }
-        
         .splash-content {
-          padding: 20px 15px;
+          padding: 30px 15px;
+          min-height: auto; /* Убираем min-height на мобильных */
+          justify-content: flex-start; /* Контент сверху */
+          padding-top: 50px;
+          padding-bottom: 50px;
         }
 
         .splash-icon {
