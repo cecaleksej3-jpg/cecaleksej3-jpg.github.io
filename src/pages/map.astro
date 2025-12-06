@@ -56,9 +56,9 @@ import '../styles/global.css';
         // Подгружаем библиотеку Leaflet динамически
         const L = (await import('leaflet')).default;
         
-        // Создаем карту с центром на Москве и масштабом 4
-        // Координаты: широта 55.7558, долгота 37.6173
-        const map = L.map('map').setView([55.7558, 37.6173], 4);
+        // Создаем карту с центром на Санкт-Петербурге и масштабом 11
+        // Координаты: широта 59.9343, долгота 30.3351
+        const map = L.map('map').setView([59.9343, 30.3351], 11);
         
         // Добавляем слой OpenStreetMap (бесплатные карты)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

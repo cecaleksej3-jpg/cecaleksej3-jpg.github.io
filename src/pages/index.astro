@@ -29,17 +29,14 @@ import { SITE_VERSION } from '../config';
       <div class="landing-content">
         <div class="landing-icon">📜</div>
         <h1 class="landing-title">Фронтовые Дневники</h1>
-        <p class="landing-subtitle">ВОВ 1941-1945</p>
+        <p class="landing-subtitle">Великой Отечественной войны 1941-1945</p>
         
         <div class="landing-divider-small"></div>
         
-        <div class="landing-info-compact">
-          <p class="info-line"><strong>ИСУ:</strong> 501671</p>
-          <p class="info-line"><small>Проект для курса "Россия в истории современных международных отношений"</small></p>
-          
-          <div class="landing-disclaimer-compact">
-            <p>⚠️ Исключительно для учебных целей</p>
-          </div>
+        <div class="splash-info">
+          <p class="splash-author">Проект создан</p>
+          <p class="splash-name">ИСУ: 501671</p>
+          <!-- <p class="splash-course">Домашнее задание по дисциплине<br>"Россия в истории современных международных отношений" от 29.11.2025</p> -->
         </div>
         
         <div class="landing-buttons">
@@ -47,17 +44,18 @@ import { SITE_VERSION } from '../config';
             🗺️ Открыть карту
           </a>
           <a href="/all-sources" class="landing-button secondary">
-            📚 Все источники
+            📚 Используемые источники
           </a>
         </div>
+
+        
 
         <!-- Выпадающие контакты -->
         <button class="contacts-toggle" id="contactsToggle">
           📧 Контакты для связи
         </button>
-        
+      
         <div class="contacts-dropdown" id="contactsDropdown" style="display: none;">
-          <button class="contacts-close" id="contactsClose">✕</button>
           <div class="contact-links">
             <a href="mailto:s501671@niuitmo.ru" class="contact-link email-link">
               <span class="contact-icon">✉️</span>
@@ -70,9 +68,15 @@ import { SITE_VERSION } from '../config';
           </div>
         </div>
         
+        <!-- Желтая плашка с предупреждением -->
+        <div class="splash-disclaimer">
+          <p class="disclaimer-text">⚠️ Исключительно для учебных целей</p>
+          <p class="disclaimer-subtext">Коммерческое использование запрещено</p>
+        </div>
+
         <!-- AI Badge -->
         <div class="landing-badge">
-          🤖 Создано с ИИ • v{SITE_VERSION}
+          🤖 Создано с использованием ИИ • v{SITE_VERSION}
         </div>
       </div>
     </div>
@@ -106,7 +110,7 @@ import { SITE_VERSION } from '../config';
         const contactsDropdown = document.getElementById('contactsDropdown') as HTMLElement | null;
         const contactsClose = document.getElementById('contactsClose');
 
-        if (contactsToggle && contactsDropdown && contactsClose) {
+        if (contactsToggle && contactsDropdown) {
           contactsToggle.addEventListener('click', () => {
             if (contactsDropdown.style.display === 'none') {
               contactsDropdown.style.display = 'block';
@@ -115,11 +119,6 @@ import { SITE_VERSION } from '../config';
               contactsDropdown.style.display = 'none';
               contactsToggle.classList.remove('active');
             }
-          });
-
-          contactsClose.addEventListener('click', () => {
-            contactsDropdown.style.display = 'none';
-            contactsToggle.classList.remove('active');
           });
 
           // Закрыть при клике вне
@@ -145,7 +144,7 @@ import { SITE_VERSION } from '../config';
       }
 
       body {
-        font-family: 'PT Serif', serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         line-height: 1.6;
         color: #1A1A1A;
       }
@@ -212,7 +211,7 @@ import { SITE_VERSION } from '../config';
       }
 
       .landing-subtitle {
-        font-family: 'PT Serif', serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         font-size: 24px;
         font-weight: 400;
         margin: 0 0 30px 0;
@@ -233,47 +232,54 @@ import { SITE_VERSION } from '../config';
         margin-top: 30px;
       }
 
-      .landing-author {
-        font-size: 16px;
-        margin: 0 0 5px 0;
-        opacity: 0.8;
+      .splash-author {
+        font-size: 18px;
+        margin: 0 0 8px 0;
+        opacity: 0.9;
         font-style: italic;
       }
 
-      .landing-name {
-        font-size: 22px;
+      .splash-name {
+        font-size: 26px;
         font-weight: 700;
-        margin: 5px 0;
+        margin: 8px 0;
         letter-spacing: 0.05em;
       }
 
-      .landing-course {
-        font-size: 14px;
+      .splash-course {
+        font-size: 16px;
         margin: 20px 0 0 0;
-        opacity: 0.85;
-        line-height: 1.6;
+        opacity: 0.9;
+        line-height: 1.7;
         font-style: italic;
       }
 
-      .landing-disclaimer {
-        margin-top: 25px;
-        padding: 15px 20px;
-        background: rgba(0, 0, 0, 0.2);
+      .splash-info {
+        margin: 25px 0;
+      }
+
+      .splash-disclaimer {
+        margin: 25px auto;
+        padding: 18px 24px;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
         border-radius: 8px;
-        border-left: 4px solid #FFD700;
+        border: 2px solid #FFD700;
+        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        max-width: 500px;
       }
 
       .disclaimer-text {
-        font-size: 14px;
-        font-weight: 600;
-        margin: 0 0 5px 0;
-        color: #FFD700;
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        color: #1A1A1A;
       }
 
       .disclaimer-subtext {
-        font-size: 12px;
+        font-size: 15px;
         margin: 0;
-        opacity: 0.9;
+        color: #1A1A1A;
+        font-weight: 500;
       }
 
       .landing-contacts {
@@ -438,12 +444,12 @@ import { SITE_VERSION } from '../config';
           font-size: 18px;
         }
 
-        .landing-name {
-          font-size: 18px;
+        .splash-name {
+          font-size: 22px;
         }
 
-        .landing-course {
-          font-size: 13px;
+        .splash-course {
+          font-size: 14px;
         }
 
         .landing-button {
@@ -452,16 +458,17 @@ import { SITE_VERSION } from '../config';
           min-width: 220px;
         }
 
-        .landing-disclaimer {
-          padding: 12px 15px;
+        .splash-disclaimer {
+          padding: 15px 20px;
+          margin: 20px auto;
         }
 
         .disclaimer-text {
-          font-size: 13px;
+          font-size: 15px;
         }
 
         .disclaimer-subtext {
-          font-size: 11px;
+          font-size: 13px;
         }
 
         .landing-contacts {
@@ -503,12 +510,16 @@ import { SITE_VERSION } from '../config';
           font-size: 16px;
         }
 
-        .landing-name {
-          font-size: 16px;
+        .splash-name {
+          font-size: 20px;
         }
 
-        .landing-course {
-          font-size: 12px;
+        .splash-course {
+          font-size: 13px;
+        }
+
+        .splash-author {
+          font-size: 15px;
         }
 
         .landing-button {
@@ -517,17 +528,17 @@ import { SITE_VERSION } from '../config';
           min-width: 200px;
         }
 
-        .landing-disclaimer {
-          padding: 10px 12px;
-          margin-top: 20px;
+        .splash-disclaimer {
+          padding: 14px 18px;
+          margin: 20px auto;
         }
 
         .disclaimer-text {
-          font-size: 12px;
+          font-size: 14px;
         }
 
         .disclaimer-subtext {
-          font-size: 10px;
+          font-size: 12px;
         }
 
         .landing-contacts {
@@ -660,7 +671,7 @@ import { SITE_VERSION } from '../config';
         cursor: pointer;
         border-radius: 4px;
         transition: all 0.3s ease;
-        font-family: 'PT Serif', serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         font-weight: 500;
       }
 

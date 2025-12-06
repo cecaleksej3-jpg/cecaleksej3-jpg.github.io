@@ -10,7 +10,7 @@
         <a href="/" class="nav-link home-link">🏠 Главная</a>
         <a href="/map" class="nav-link map-link">🗺️ Карта</a>
         <button class="toggle-navbar" id="toggle-navbar" aria-label="Свернуть/развернуть шапку" title="Свернуть шапку">▲</button>
-        <a href="/all-sources" class="nav-link sources-link">📚 Все источники</a>
+        <a href="/all-sources" class="nav-link sources-link">📚 Используемые источники</a>
         <button class="hamburger" id="hamburger" aria-label="Открыть меню">☰</button>
       </div>
     </div>
@@ -30,18 +30,24 @@
   const mapContainer = document.querySelector('.map-container');
   
   // Обработка сворачивания/разворачивания navbar
-  if (navbar && toggleNavbar && showNavbar && mapContainer) {
+  if (navbar && toggleNavbar && showNavbar) {
     toggleNavbar.addEventListener('click', (e) => {
       e.stopPropagation();
       navbar.classList.add('hidden');
       showNavbar.style.display = 'flex';
-      mapContainer.classList.add('fullscreen');
+      // Добавляем fullscreen только если есть map-container
+      if (mapContainer) {
+        mapContainer.classList.add('fullscreen');
+      }
     });
 
     showNavbar.addEventListener('click', () => {
       navbar.classList.remove('hidden');
       showNavbar.style.display = 'none';
-      mapContainer.classList.remove('fullscreen');
+      // Убираем fullscreen только если есть map-container
+      if (mapContainer) {
+        mapContainer.classList.remove('fullscreen');
+      }
     });
   }
   
