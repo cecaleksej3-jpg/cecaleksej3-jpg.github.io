@@ -11,6 +11,11 @@ export default defineConfig({
 	vite: {
 		ssr: {
 			external: ['leaflet']
+		},
+		server: {
+			fs: {
+				allow: ['..']
+			}
 		}
 	}
 });

@@ -1,8 +1,7 @@
 ---
-// index.astro - Главная страница с картой
-import Navbar from '../components/Navbar.astro';
-import Sidebar from '../components/Sidebar.astro';
+// index.astro - Главная страница (лендинг)
 import '../styles/global.css';
+import { SITE_VERSION } from '../config';
 ---
 
 <!doctype html>
@@ -13,215 +12,158 @@ import '../styles/global.css';
     <title>Фронтовые Дневники ВОВ - Интерактивная карта</title>
     <meta name="description" content="Интерактивная карта дневников фронтовиков Великой Отечественной войны">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Roboto+Slab:wght@400;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
-    <!-- Splash Screen -->
-    <div id="splash-screen" class="splash-screen">
-      <div class="splash-content">
-        <div class="splash-icon">📜</div>
-        <h1 class="splash-title">Фронтовые Дневники</h1>
-        
-        <div class="splash-info">
-          <p class="splash-author">Проект создан</p>
-          <p class="splash-name">ИСУ: 501671</p>
-          <p class="splash-course">Домашнее задание по дисциплине<br>"Россия в истории современных международных отношений" от 29.11.2025</p>
-          
-          <div class="splash-disclaimer">
-            <p class="disclaimer-text">⚠️ Проект исключительно для учебных целей</p>
-            <p class="disclaimer-subtext">Коммерческое использование запрещено</p>
-          </div>
-          
-          <div class="splash-contacts">
-            <p class="contacts-title">Контакты для связи:</p>
-            <div class="contact-links">
-              <a href="mailto:s501671@niuitmo.ru" class="contact-link email-link">
-                <span class="contact-icon">✉️</span>
-                <span>s501671@niuitmo.ru</span>
-              </a>
-              <a href="https://t.me/sharky_a" target="_blank" rel="noopener noreferrer" class="contact-link telegram-link">
-                <span class="contact-icon">📱</span>
-                <span>@sharky_a</span>
-              </a>
-            </div>
-          </div>
-        </div>
-        
-        <button id="splash-button" class="splash-button">
-          Хорошо! Я хочу увидеть карту
-        </button>
+    <!-- Предупреждение для мобильных -->
+    <div class="mobile-warning" id="mobileWarning">
+      <div class="warning-content">
+        <span class="warning-close" id="warningClose">✕</span>
+        <p>💻 Для лучшего опыта рекомендуется просматривать на ПК</p>
       </div>
     </div>
 
-    <Navbar />
-    <Sidebar />
-    <main class="map-container">
-      <div id="map"></div>
-      
-      <!-- Информация об использовании ИИ и источниках данных -->
-      <div class="info-badge" id="info-badge">
-        <button class="info-badge-close" id="info-badge-close" aria-label="Закрыть">✕</button>
-        <div class="info-badge-content">
-          <span class="info-icon">🤖</span>
-          <div class="info-text">
-            <p class="info-ai">Создано с использованием искусственного интеллекта</p>
-            <p class="info-source">Исторические данные: <a href="https://corpus.prozhito.org/" target="_blank" rel="noopener noreferrer">corpus.prozhito.org</a></p>
+    <div class="landing-page">
+      <div class="landing-content">
+        <div class="landing-icon">📜</div>
+        <h1 class="landing-title">Фронтовые Дневники</h1>
+        <p class="landing-subtitle">ВОВ 1941-1945</p>
+        
+        <div class="landing-divider-small"></div>
+        
+        <div class="landing-info-compact">
+          <p class="info-line"><strong>ИСУ:</strong> 501671</p>
+          <p class="info-line"><small>Проект для курса "Россия в истории современных международных отношений"</small></p>
+          
+          <div class="landing-disclaimer-compact">
+            <p>⚠️ Исключительно для учебных целей</p>
           </div>
         </div>
+        
+        <div class="landing-buttons">
+          <a href="/map" class="landing-button primary">
+            🗺️ Открыть карту
+          </a>
+          <a href="/all-sources" class="landing-button secondary">
+            📚 Все источники
+          </a>
+        </div>
+
+        <!-- Выпадающие контакты -->
+        <button class="contacts-toggle" id="contactsToggle">
+          📧 Контакты для связи
+        </button>
+        
+        <div class="contacts-dropdown" id="contactsDropdown" style="display: none;">
+          <button class="contacts-close" id="contactsClose">✕</button>
+          <div class="contact-links">
+            <a href="mailto:s501671@niuitmo.ru" class="contact-link email-link">
+              <span class="contact-icon">✉️</span>
+              <span>s501671@niuitmo.ru</span>
+            </a>
+            <a href="https://t.me/sharky_a" target="_blank" rel="noopener noreferrer" class="contact-link telegram-link">
+              <span class="contact-icon">📱</span>
+              <span>@sharky_a</span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- AI Badge -->
+        <div class="landing-badge">
+          🤖 Создано с ИИ • v{SITE_VERSION}
+        </div>
       </div>
-    </main>
+    </div>
 
     <script>
-      // Обработка приветственного экрана
-      // Ждем полной загрузки страницы
+      // Проверка мобильного устройства
+      function isMobileDevice() {
+        const userAgent = navigator.userAgent || navigator.vendor || '';
+        return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+      }
+
+      // Показать предупреждение для мобильных
       window.addEventListener('DOMContentLoaded', () => {
-        const splashScreen = document.getElementById('splash-screen');
-        const splashButton = document.getElementById('splash-button');
-        const infoBadge = document.getElementById('info-badge');
-        const infoBadgeClose = document.getElementById('info-badge-close');
+        const mobileWarning = document.getElementById('mobileWarning') as HTMLElement | null;
+        const warningClose = document.getElementById('warningClose');
         
-        if (splashScreen && splashButton) {
-          // Блокируем прокрутку body когда splash screen открыт
-          document.body.style.overflow = 'hidden';
-          
-          // При клике на кнопку запускаем анимацию скрытия
-          splashButton.addEventListener('click', () => {
-            splashScreen.classList.add('fade-out');
-            
-            // Возвращаем прокрутку body
-            document.body.style.overflow = '';
-            
-            // Убираем элемент из DOM после завершения анимации (1 секунда)
-            setTimeout(() => {
-              splashScreen.style.display = 'none';
-            }, 1000);
+        if (isMobileDevice() && mobileWarning) {
+          mobileWarning.style.display = 'flex';
+        }
+        
+        if (warningClose) {
+          warningClose.addEventListener('click', () => {
+            if (mobileWarning) {
+              mobileWarning.style.display = 'none';
+            }
           });
         }
 
-        // Обработка закрытия информационной плашки
-        if (infoBadge && infoBadgeClose) {
-          infoBadgeClose.addEventListener('click', () => {
-            infoBadge.classList.add('fade-out');
-            setTimeout(() => {
-              infoBadge.style.display = 'none';
-            }, 300);
+        // Обработка выпадающих контактов
+        const contactsToggle = document.getElementById('contactsToggle') as HTMLElement | null;
+        const contactsDropdown = document.getElementById('contactsDropdown') as HTMLElement | null;
+        const contactsClose = document.getElementById('contactsClose');
+
+        if (contactsToggle && contactsDropdown && contactsClose) {
+          contactsToggle.addEventListener('click', () => {
+            if (contactsDropdown.style.display === 'none') {
+              contactsDropdown.style.display = 'block';
+              contactsToggle.classList.add('active');
+            } else {
+              contactsDropdown.style.display = 'none';
+              contactsToggle.classList.remove('active');
+            }
+          });
+
+          contactsClose.addEventListener('click', () => {
+            contactsDropdown.style.display = 'none';
+            contactsToggle.classList.remove('active');
+          });
+
+          // Закрыть при клике вне
+          document.addEventListener('click', (e) => {
+            const target = e.target as Node | null;
+            if (target && contactsToggle && contactsDropdown) {
+              if (!contactsToggle.contains(target) && !contactsDropdown.contains(target)) {
+                contactsDropdown.style.display = 'none';
+                contactsToggle.classList.remove('active');
+              }
+            }
           });
         }
       });
-
-      // Основная функция для инициализации карты
-      async function initializeMap() {
-        // Подгружаем библиотеку Leaflet динамически
-        const L = (await import('leaflet')).default;
-        
-        // Создаем карту с центром на Москве и масштабом 4
-        // Координаты: широта 55.7558, долгота 37.6173
-        const map = L.map('map').setView([55.7558, 37.6173], 4);
-        
-        // Добавляем слой OpenStreetMap (бесплатные карты)
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors',
-          maxZoom: 19,
-        }).addTo(map);
-        
-        // Функция возвращает путь к иконке маркера в зависимости от типа события
-        // Типы: default (обычное), death (смерть), good (положительное)
-        function getIconUrl(type) {
-          const icons = {
-            'default': '/assets/icons/marker-default.svg',
-            'death': '/assets/icons/marker-death.svg',
-            'good': '/assets/icons/marker-good.svg'
-          };
-          // Если тип не найден, возвращаем иконку по умолчанию
-          return icons[type] || icons['default'];
-        }
-        
-        // Создание кастомной иконки для маркера
-        function createCustomIcon(type) {
-          return L.icon({
-            iconUrl: getIconUrl(type),
-            iconSize: [32, 40],        // Размер иконки
-            iconAnchor: [16, 40],       // Точка привязки к координатам
-            popupAnchor: [0, -40],      // Смещение всплывающего окна
-            className: `marker-${type}` // CSS класс для дополнительной стилизации
-          });
-        }
-        
-        // Загружаем данные о точках из JSON файла
-        try {
-          const response = await fetch('/data/points.json');
-          const data = await response.json();
-          
-          // Проверяем что данные загрузились корректно
-          if (data.points && Array.isArray(data.points)) {
-            // Проходим по каждой точке и создаем маркер
-            data.points.forEach(point => {
-              const marker = L.marker(
-                [point.lat, point.lng],
-                { icon: createCustomIcon(point.type || 'default') }
-              ).addTo(map);
-              
-              // Формируем HTML контент для всплывающего окна (popup)
-              // Показываем название, дату, цитату, контекст и автора
-              const popupContent = `
-                <div class="marker-popup">
-                  <h3>${point.title}</h3>
-                  <div class="date">${new Date(point.date).toLocaleDateString('ru-RU')}</div>
-                  <div class="quote">"${point.quote}"</div>
-                  <div class="context">${point.context}</div>
-                  <div class="author">
-                    — <a href="${point.author_link}" target="_blank">${point.author}</a>
-                  </div>
-                </div>
-              `;
-              
-              // Привязываем popup к маркеру
-              marker.bindPopup(popupContent, {
-                maxWidth: 300,
-                className: 'popup-custom'
-              });
-            });
-          }
-        } catch (error) {
-          // Выводим ошибку в консоль если не удалось загрузить данные
-          console.error('Ошибка при загрузке маркеров:', error);
-        }
-      }
-      
-      // Запускаем инициализацию карты после загрузки страницы
-      // Проверяем готовность документа
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeMap);
-      } else {
-        // Если страница уже загружена, запускаем сразу
-        initializeMap();
-      }
     </script>
 
     <style>
-      /* Splash Screen Styles */
-      .splash-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+      /* Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'PT Serif', serif;
+        line-height: 1.6;
+        color: #1A1A1A;
+      }
+
+      /* Landing Page Styles */
+      .landing-page {
         min-height: 100vh;
+        width: 100%;
         background: linear-gradient(135deg, #8B9D6F 0%, #556B2F 100%);
-        z-index: 10000;
-        opacity: 1;
-        transition: opacity 1s ease-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         overflow-y: auto;
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain; /* Предотвращаем прокрутку body */
       }
 
-      .splash-screen.fade-out {
-        opacity: 0;
-      }
-
-      .splash-content {
+      .landing-content {
         text-align: center;
         color: #F5F5DC;
         padding: 40px 20px;
@@ -245,7 +187,7 @@ import '../styles/global.css';
         }
       }
 
-      .splash-icon {
+      .landing-icon {
         font-size: 80px;
         margin-bottom: 20px;
         animation: pulse 2s ease-in-out infinite;
@@ -260,7 +202,7 @@ import '../styles/global.css';
         }
       }
 
-      .splash-title {
+      .landing-title {
         font-family: 'Roboto Slab', serif;
         font-size: 48px;
         font-weight: 700;
@@ -269,7 +211,7 @@ import '../styles/global.css';
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
       }
 
-      .splash-subtitle {
+      .landing-subtitle {
         font-family: 'PT Serif', serif;
         font-size: 24px;
         font-weight: 400;
@@ -279,7 +221,7 @@ import '../styles/global.css';
         opacity: 0.9;
       }
 
-      .splash-divider {
+      .landing-divider {
         width: 100px;
         height: 3px;
         background: #F5F5DC;
@@ -287,32 +229,25 @@ import '../styles/global.css';
         border-radius: 2px;
       }
 
-      .splash-info {
+      .landing-info {
         margin-top: 30px;
       }
 
-      .splash-author {
+      .landing-author {
         font-size: 16px;
         margin: 0 0 5px 0;
         opacity: 0.8;
         font-style: italic;
       }
 
-      .splash-name {
+      .landing-name {
         font-size: 22px;
         font-weight: 700;
         margin: 5px 0;
         letter-spacing: 0.05em;
       }
 
-      .splash-details {
-        font-size: 18px;
-        font-weight: 600;
-        margin: 10px 0;
-        color: #FFD700;
-      }
-
-      .splash-course {
+      .landing-course {
         font-size: 14px;
         margin: 20px 0 0 0;
         opacity: 0.85;
@@ -320,7 +255,7 @@ import '../styles/global.css';
         font-style: italic;
       }
 
-      .splash-disclaimer {
+      .landing-disclaimer {
         margin-top: 25px;
         padding: 15px 20px;
         background: rgba(0, 0, 0, 0.2);
@@ -341,7 +276,7 @@ import '../styles/global.css';
         opacity: 0.9;
       }
 
-      .splash-contacts {
+      .landing-contacts {
         margin-top: 25px;
         padding: 20px;
         background: rgba(255, 255, 255, 0.1);
@@ -398,21 +333,37 @@ import '../styles/global.css';
         box-shadow: 0 0 15px rgba(0, 136, 204, 0.4);
       }
 
-      .splash-button {
-        margin-top: 30px;
+      .landing-buttons {
+        margin-top: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .landing-button {
         padding: 14px 32px;
-        background: #FFD700;
-        color: var(--color-black);
         border: none;
         border-radius: 8px;
-        font-family: var(--font-sans);
+        font-family: 'Roboto Slab', serif;
         font-size: 16px;
         font-weight: 700;
         letter-spacing: 0.05em;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        text-decoration: none;
         text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 250px;
+        justify-content: center;
+      }
+
+      .landing-button.primary {
+        background: #FFD700;
+        color: #1A1A1A;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         animation: buttonPulse 2s ease-in-out infinite;
       }
 
@@ -427,52 +378,81 @@ import '../styles/global.css';
         }
       }
 
-      .splash-button:hover {
+      .landing-button.primary:hover {
         background: #FFC700;
         transform: scale(1.08);
         box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
       }
 
-      .splash-button:active {
+      .landing-button.secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #F5F5DC;
+        border: 2px solid rgba(255, 215, 0, 0.5);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .landing-button.secondary:hover {
+        background: rgba(255, 215, 0, 0.2);
+        border-color: #FFD700;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+      }
+
+      .landing-button:active {
         transform: scale(0.98);
       }
 
-      /* Responsive для splash screen */
+      .landing-badge {
+        margin-top: 40px;
+        padding: 10px 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 20px;
+        font-size: 12px;
+        opacity: 0.8;
+        display: inline-block;
+        line-height: 1.5;
+      }
+
+      .badge-version {
+        font-size: 10px;
+        opacity: 0.7;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+      }
+
+      /* Responsive */
       @media (max-width: 768px) {
-        .splash-content {
+        .landing-content {
           padding: 30px 20px;
         }
 
-        .splash-icon {
+        .landing-icon {
           font-size: 60px;
         }
 
-        .splash-title {
+        .landing-title {
           font-size: 32px;
         }
 
-        .splash-subtitle {
+        .landing-subtitle {
           font-size: 18px;
         }
 
-        .splash-name {
+        .landing-name {
           font-size: 18px;
         }
 
-        .splash-details {
-          font-size: 16px;
-        }
-
-        .splash-course {
+        .landing-course {
           font-size: 13px;
         }
 
-        .splash-button {
+        .landing-button {
           font-size: 14px;
           padding: 12px 24px;
+          min-width: 220px;
         }
 
-        .splash-disclaimer {
+        .landing-disclaimer {
           padding: 12px 15px;
         }
 
@@ -484,7 +464,7 @@ import '../styles/global.css';
           font-size: 11px;
         }
 
-        .splash-contacts {
+        .landing-contacts {
           padding: 15px;
         }
 
@@ -503,45 +483,41 @@ import '../styles/global.css';
       }
 
       @media (max-width: 480px) {
-        .splash-content {
+        .landing-content {
           padding: 30px 15px;
-          min-height: auto; /* Убираем min-height на мобильных */
-          justify-content: flex-start; /* Контент сверху */
+          min-height: auto;
+          justify-content: flex-start;
           padding-top: 50px;
           padding-bottom: 50px;
         }
 
-        .splash-icon {
+        .landing-icon {
           font-size: 50px;
         }
 
-        .splash-title {
+        .landing-title {
           font-size: 26px;
         }
 
-        .splash-subtitle {
+        .landing-subtitle {
           font-size: 16px;
         }
 
-        .splash-name {
+        .landing-name {
           font-size: 16px;
         }
 
-        .splash-details {
-          font-size: 14px;
-        }
-
-        .splash-course {
+        .landing-course {
           font-size: 12px;
         }
 
-        .splash-button {
+        .landing-button {
           font-size: 13px;
           padding: 10px 20px;
-          margin-top: 25px;
+          min-width: 200px;
         }
 
-        .splash-disclaimer {
+        .landing-disclaimer {
           padding: 10px 12px;
           margin-top: 20px;
         }
@@ -554,7 +530,7 @@ import '../styles/global.css';
           font-size: 10px;
         }
 
-        .splash-contacts {
+        .landing-contacts {
           padding: 12px;
           margin-top: 20px;
         }
@@ -573,157 +549,303 @@ import '../styles/global.css';
         .contact-icon {
           font-size: 16px;
         }
+
+        .landing-badge {
+          font-size: 11px;
+          padding: 8px 16px;
+          margin-top: 30px;
+        }
       }
 
-      /* Информационная плашка на карте */
-      .info-badge {
+      /* Mobile Warning Styles */
+      .mobile-warning {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1000;
-        background: rgba(139, 157, 111, 0.95);
-        backdrop-filter: blur(10px);
-        border: 2px solid var(--color-khaki-dark);
-        border-radius: 8px;
-        padding: 12px 16px 12px 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        max-width: 350px;
-        animation: slideInRight 0.5s ease-out;
-        opacity: 1;
-        transition: opacity 0.3s ease-out;
-        position: relative;
-      }
-
-      .info-badge.fade-out {
-        opacity: 0;
-      }
-
-      .info-badge-close {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background: rgba(0, 0, 0, 0.3);
-        border: none;
-        color: var(--color-cream);
-        font-size: 18px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        line-height: 1;
-        padding: 0;
-      }
-
-      .info-badge-close:hover {
-        background: rgba(0, 0, 0, 0.6);
-        transform: scale(1.1);
-      }
-
-      @keyframes slideInRight {
-        from {
-          opacity: 0;
-          transform: translateX(100%);
-        }
-        to {
-          opacity: 1;
-          transform: translateX(0);
-        }
-      }
-
-      .info-badge-content {
-        display: flex;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #8B9D6F 0%, #556B2F 100%);
+        color: #F5F5DC;
+        padding: 12px 16px;
+        z-index: 1100;
+        display: none;
+        justify-content: space-between;
         align-items: center;
         gap: 12px;
-        padding-right: 20px;
+        animation: slideDown 0.3s ease-out;
       }
 
-      .info-icon {
-        font-size: 28px;
-        flex-shrink: 0;
+      @keyframes slideDown {
+        from {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
       }
 
-      .info-text {
+      .warning-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
         flex: 1;
       }
 
-      .info-text p {
+      .mobile-warning p {
         margin: 0;
-        line-height: 1.4;
-        color: var(--color-cream);
+        font-size: 14px;
+        flex: 1;
       }
 
-      .info-ai {
+      .warning-close {
+        cursor: pointer;
+        font-size: 18px;
+        color: #F5F5DC;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        padding: 4px 8px;
+        border-radius: 3px;
+        transition: background 0.2s;
+      }
+
+      .warning-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Compact Info Styles */
+      .landing-info-compact {
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      .info-line {
+        font-size: 15px;
+        margin: 8px 0;
+        opacity: 0.95;
+      }
+
+      .landing-divider-small {
+        width: 60px;
+        height: 2px;
+        background: #F5F5DC;
+        margin: 15px auto;
+        border-radius: 1px;
+        opacity: 0.6;
+      }
+
+      .landing-disclaimer-compact {
+        margin-top: 15px;
+        padding: 10px 15px;
+        background: rgba(85, 107, 47, 0.2);
+        border-left: 3px solid #FFD700;
+        border-radius: 3px;
+      }
+
+      .landing-disclaimer-compact p {
+        margin: 0;
         font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 4px !important;
-        letter-spacing: 0.03em;
-      }
-
-      .info-source {
-        font-size: 11px;
         opacity: 0.9;
       }
 
-      .info-source a {
+      /* Contacts Toggle & Dropdown */
+      .contacts-toggle {
+        background: linear-gradient(135deg, #8B9D6F 0%, #556B2F 100%);
+        color: #F5F5DC;
+        border: 2px solid #F5F5DC;
+        padding: 12px 24px;
+        margin: 20px auto;
+        font-size: 15px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        font-family: 'PT Serif', serif;
+        font-weight: 500;
+      }
+
+      .contacts-toggle:hover {
+        background: linear-gradient(135deg, #556B2F 0%, #8B9D6F 100%);
+        transform: scale(1.05);
+      }
+
+      .contacts-toggle.active {
+        background: linear-gradient(135deg, #556B2F 0%, #8B9D6F 100%);
+        border-color: #FFD700;
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+      }
+
+      .contacts-dropdown {
+        background: rgba(85, 107, 47, 0.15);
+        border: 2px solid rgba(139, 157, 111, 0.4);
+        border-radius: 4px;
+        padding: 20px;
+        margin: 15px auto;
+        max-width: 400px;
+        animation: slideIn 0.3s ease-out;
+        position: relative;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .contacts-close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: none;
+        border: none;
+        color: #F5F5DC;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 4px;
+        transition: color 0.2s;
+      }
+
+      .contacts-close:hover {
         color: #FFD700;
+      }
+
+      .contact-links {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      .contact-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        background: rgba(139, 157, 111, 0.2);
+        border: 1px solid rgba(139, 157, 111, 0.4);
+        border-radius: 3px;
+        color: #F5F5DC;
         text-decoration: none;
-        font-weight: 600;
-        border-bottom: 1px solid transparent;
-        transition: border-color 0.3s ease;
+        transition: all 0.3s ease;
+        font-size: 14px;
       }
 
-      .info-source a:hover {
-        border-bottom-color: #FFD700;
+      .contact-link:hover {
+        background: rgba(255, 215, 0, 0.15);
+        border-color: #FFD700;
+        color: #FFD700;
       }
 
-      /* Responsive для info badge */
+      .contact-icon {
+        font-size: 18px;
+      }
+
+      /* Responsive adjustments */
       @media (max-width: 768px) {
-        .info-badge {
-          bottom: 15px;
-          right: 15px;
-          max-width: 300px;
+        .mobile-warning {
           padding: 10px 12px;
         }
 
-        .info-icon {
-          font-size: 24px;
-        }
-
-        .info-ai {
+        .mobile-warning p {
           font-size: 12px;
         }
 
-        .info-source {
-          font-size: 10px;
+        .warning-close {
+          font-size: 16px;
+          padding: 3px 6px;
+        }
+
+        .info-line {
+          font-size: 13px;
+        }
+
+        .contacts-toggle {
+          padding: 10px 20px;
+          font-size: 14px;
+        }
+
+        .contact-link {
+          font-size: 13px;
+          padding: 10px 14px;
+          gap: 8px;
+        }
+
+        .contact-icon {
+          font-size: 16px;
         }
       }
 
       @media (max-width: 480px) {
-        .info-badge {
-          bottom: 10px;
-          right: 10px;
-          max-width: 280px;
-          padding: 8px 10px;
-        }
-
-        .info-badge-content {
+        .mobile-warning {
+          flex-direction: column;
+          padding: 12px;
           gap: 8px;
         }
 
-        .info-icon {
-          font-size: 20px;
+        .warning-content {
+          flex-direction: column;
+          width: 100%;
         }
 
-        .info-ai {
+        .mobile-warning p {
           font-size: 11px;
+          text-align: center;
         }
 
-        .info-source {
-          font-size: 9px;
+        .landing-info-compact {
+          margin: 15px 0;
+        }
+
+        .info-line {
+          font-size: 12px;
+          margin: 6px 0;
+        }
+
+        .landing-divider-small {
+          width: 50px;
+          margin: 12px auto;
+        }
+
+        .landing-disclaimer-compact {
+          margin-top: 12px;
+          padding: 8px 12px;
+        }
+
+        .landing-disclaimer-compact p {
+          font-size: 12px;
+        }
+
+        .contacts-toggle {
+          padding: 10px 18px;
+          font-size: 13px;
+          margin: 15px auto;
+        }
+
+        .contacts-dropdown {
+          margin: 10px auto;
+          padding: 15px;
+          max-width: calc(100% - 30px);
+        }
+
+        .contacts-close {
+          font-size: 18px;
+          top: 6px;
+          right: 6px;
+        }
+
+        .contact-link {
+          font-size: 12px;
+          padding: 10px 12px;
+          gap: 8px;
+        }
+
+        .contact-icon {
+          font-size: 16px;
         }
       }
     </style>

@@ -162,15 +162,44 @@ button:active, .button:active {
   font-weight: 700;
   color: var(--color-black);
   letter-spacing: 0.05em;
-  flex: 1;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.navbar-title:hover {
+  opacity: 0.8;
 }
 
 .navbar-actions {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
+.nav-link {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--color-khaki-dark);
+  color: var(--color-cream);
+  text-decoration: none;
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  border: 2px solid var(--color-khaki-dark);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  background-color: transparent;
+  color: var(--color-khaki-dark);
+  box-shadow: 0 2px 8px rgba(85, 107, 47, 0.3);
+}
+
+/* Старые классы для совместимости */
 .sources-link {
   display: inline-block;
   padding: 0.6rem 1.2rem;
@@ -294,6 +323,32 @@ button:active, .button:active {
   padding-bottom: 10px;
 }
 
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 12px 15px;
+  background-color: var(--color-khaki);
+  color: var(--color-white);
+  border: 2px solid var(--color-khaki-dark);
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.sidebar-link:hover {
+  background-color: var(--color-khaki-dark);
+  transform: translateX(5px);
+  border-bottom: 2px solid var(--color-khaki-dark);
+}
+
+/* Старый стиль для совместимости */
 .sidebar-content a {
   display: inline-block;
   margin-top: 1rem;
@@ -519,6 +574,7 @@ main {
     font-size: 18px;
   }
 
+  .nav-link,
   .sources-link {
     display: none;
   }
