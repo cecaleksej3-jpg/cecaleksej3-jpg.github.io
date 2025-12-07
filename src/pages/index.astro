@@ -40,18 +40,22 @@ import { SITE_VERSION } from "../config";
         <div class="info-card">
           <p class="info-card-title">Только образовательные цели</p>
           <p class="info-card-body">
-            Проект создан исключительно в образовательных целях. Контент основан на дневниках участников и свидетелей блокады Ленинграда. Информация будет постепенно дополняться.
+            Проект создан исключительно в образовательных целях. Является выполнением домашнего задания по дисциплине "Россия в истории современных международных отношений" от 29.11.2025. Информация будет постепенно дополняться.
           </p>
         </div>
 
         <div class="contacts-card">
           <p class="contacts-title">Связаться</p>
           <div class="contact-row">
-            <span class="contact-icon">✉️</span>
+            <a href="mailto:s501671@niuitmo.ru" class="contact-icon-btn mail-icon-btn">
+              <img src="/assets/logos/mail.png" alt="Email" />
+            </a>
             <a href="mailto:s501671@niuitmo.ru">s501671@niuitmo.ru</a>
           </div>
           <div class="contact-row">
-            <span class="contact-icon">💬</span>
+            <a href="https://t.me/sharky_a" target="_blank" rel="noopener noreferrer" class="contact-icon-btn tg-icon-btn">
+              <img src="/assets/logos/tg.svg" alt="Telegram" />
+            </a>
             <a href="https://t.me/sharky_a" target="_blank" rel="noopener noreferrer">@sharky_a</a>
           </div>
         </div>
@@ -345,9 +349,79 @@ import { SITE_VERSION } from "../config";
         text-decoration: underline;
       }
 
-      .contact-icon {
+      .contact-icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+      }
+
+      .contact-icon-btn img {
+        width: 14px;
+        height: 14px;
+        display: block;
+        filter: brightness(0.95);
+      }
+
+      .contact-icon-btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      .contact-icon-btn:hover img {
+        filter: brightness(1.1);
+      }
+
+      .contact-buttons {
         font-size: 16px;
         opacity: 0.85;
+      }
+
+      .contact-buttons {
+        display: flex;
+        gap: 42px;
+        margin-top: 44px;
+        padding-top: 42px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .contact-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .contact-btn img {
+        width: 24px;
+        height: 24px;
+        display: block;
+        filter: brightness(0.95) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+      }
+
+      .contact-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+      }
+
+      .contact-btn:hover img {
+        filter: brightness(1.1) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
       }
 
       .info-footer {
