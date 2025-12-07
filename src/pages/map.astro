@@ -15,6 +15,9 @@ import '../styles/global.css';
     <meta name="description" content="Интерактивная карта дневников фронтовиков Великой Отечественной войны">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   </head>
   <body>
     <Navbar />
@@ -100,9 +103,21 @@ import '../styles/global.css';
         // Подгружаем библиотеку Leaflet динамически
         const L = (await import('leaflet')).default;
         
-        // Создаем карту с центром на Санкт-Петербурге и масштабом 6
-        // Координаты: широта 59.9343, долгота 30.3351
-        const map = L.map('map').setView([59.9343, 30.3351], 6);
+        // Получаем параметры из URL для центровки карты
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramLatStr = urlParams.get('lat');
+        const paramLngStr = urlParams.get('lng');
+        const paramZoomStr = urlParams.get('zoom');
+        const paramLat = paramLatStr ? parseFloat(paramLatStr) : NaN;
+        const paramLng = paramLngStr ? parseFloat(paramLngStr) : NaN;
+        const paramZoom = paramZoomStr ? parseInt(paramZoomStr) : 6;
+        
+        // Если есть параметры, центруем на них, иначе на Санкт-Петербурге
+        const centerLat = isNaN(paramLat) ? 59.9343 : paramLat;
+        const centerLng = isNaN(paramLng) ? 30.3351 : paramLng;
+        
+        // Создаем карту с центром на переданных координатах или на Санкт-Петербурге
+        const map = L.map('map').setView([centerLat, centerLng], paramZoom);
         
         // Добавляем слой OpenStreetMap (бесплатные карты)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -185,19 +200,66 @@ import '../styles/global.css';
     </script>
 
     <style>
-      /* Информационная плашка на карте */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #12100e;
+        color: #F7F5EF;
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: 
+          radial-gradient(circle at 15% 25%, rgba(247, 245, 239, 0.04) 0%, transparent 50%),
+          radial-gradient(circle at 85% 75%, rgba(247, 245, 239, 0.03) 0%, transparent 50%),
+          repeating-linear-gradient(45deg, transparent, transparent 80px, rgba(247, 245, 239, 0.012) 80px, rgba(247, 245, 239, 0.012) 160px);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .map-container {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+        transition: top 0.3s ease;
+      }
+
+      .map-container.fullscreen {
+        top: 0;
+      }
+
+      #map {
+        height: 100%;
+        width: 100%;
+        border-radius: 0;
+      }
+
+      /* Информационная плашка */
       .info-badge {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1000;
-        background: rgba(139, 157, 111, 0.95);
-        backdrop-filter: blur(10px);
-        border: 2px solid var(--color-khaki-dark);
-        border-radius: 8px;
-        padding: 12px 16px 12px 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        max-width: 350px;
+        bottom: 24px;
+        right: 24px;
+        z-index: 1001;
+        background: linear-gradient(135deg, rgba(18, 21, 18, 0.92), rgba(12, 14, 12, 0.94));
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(247, 245, 239, 0.18);
+        border-radius: 14px;
+        padding: 16px 20px 16px 16px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+        max-width: 380px;
         animation: slideInRight 0.5s ease-out;
         opacity: 1;
         transition: opacity 0.3s ease-out;
@@ -210,14 +272,14 @@ import '../styles/global.css';
 
       .info-badge-close {
         position: absolute;
-        top: 8px;
-        right: 8px;
-        background: rgba(0, 0, 0, 0.3);
-        border: none;
-        color: var(--color-cream);
-        font-size: 18px;
-        width: 24px;
-        height: 24px;
+        top: 10px;
+        right: 10px;
+        background: rgba(247, 245, 239, 0.08);
+        border: 1px solid rgba(247, 245, 239, 0.15);
+        color: #F7F5EF;
+        font-size: 16px;
+        width: 26px;
+        height: 26px;
         border-radius: 50%;
         cursor: pointer;
         display: flex;
@@ -226,11 +288,12 @@ import '../styles/global.css';
         transition: all 0.3s ease;
         line-height: 1;
         padding: 0;
+        font-weight: 700;
       }
 
       .info-badge-close:hover {
-        background: rgba(0, 0, 0, 0.6);
-        transform: scale(1.1);
+        background: rgba(247, 245, 239, 0.18);
+        transform: scale(1.05);
       }
 
       @keyframes slideInRight {
@@ -247,12 +310,12 @@ import '../styles/global.css';
       .info-badge-content {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding-right: 20px;
+        gap: 14px;
+        padding-right: 24px;
       }
 
       .info-icon {
-        font-size: 28px;
+        font-size: 32px;
         flex-shrink: 0;
       }
 
@@ -262,59 +325,187 @@ import '../styles/global.css';
 
       .info-text p {
         margin: 0;
-        line-height: 1.4;
-        color: var(--color-cream);
+        line-height: 1.5;
+        color: #F7F5EF;
       }
 
       .info-ai {
-        font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 4px !important;
-        letter-spacing: 0.03em;
-      }
-
-            .badge-version {
-        font-size: 10px;
-        opacity: 0.7;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        display: block;
-        margin-top: 4px;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 6px !important;
+        letter-spacing: 0.04em;
+        color: #F7F5EF;
       }
 
       .badge-version {
-        font-size: 10px;
-        opacity: 0.7;
+        font-size: 11px;
+        opacity: 0.65;
         font-weight: 600;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.06em;
         display: block;
-        margin-top: 4px;
+        margin-top: 5px;
+        color: rgba(247, 245, 239, 0.7);
       }
 
       .info-source {
-        font-size: 11px;
-        opacity: 0.9;
+        font-size: 12px;
+        opacity: 0.85;
+        color: rgba(247, 245, 239, 0.85);
       }
 
       .info-source a {
-        color: #FFD700;
+        color: #F7F5EF;
         text-decoration: none;
         font-weight: 600;
-        border-bottom: 1px solid transparent;
-        transition: border-color 0.3s ease;
+        border-bottom: 1px solid rgba(247, 245, 239, 0.3);
+        transition: all 0.3s ease;
       }
 
       .info-source a:hover {
-        border-bottom-color: #FFD700;
+        border-bottom-color: #F7F5EF;
+        color: #fff;
       }
 
-      /* Responsive для info badge */
+      /* Стили попапов маркеров */
+      .leaflet-popup-content-wrapper {
+        background: linear-gradient(135deg, rgba(18, 21, 18, 0.96), rgba(12, 14, 12, 0.98));
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(247, 245, 239, 0.2);
+        border-radius: 12px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+        padding: 0;
+      }
+
+      .leaflet-popup-content {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+      }
+
+      .marker-popup {
+        padding: 18px 20px;
+        color: #F7F5EF;
+      }
+
+      .marker-popup h3 {
+        font-family: 'PT Serif', serif;
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 10px 0;
+        color: #F7F5EF;
+        letter-spacing: 0.02em;
+      }
+
+      .marker-popup .date {
+        font-size: 12px;
+        color: rgba(247, 245, 239, 0.7);
+        margin-bottom: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .marker-popup .quote {
+        font-family: 'PT Serif', serif;
+        font-style: italic;
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 12px 0;
+        padding-left: 12px;
+        border-left: 3px solid rgba(247, 245, 239, 0.3);
+        color: rgba(247, 245, 239, 0.95);
+      }
+
+      .marker-popup .context {
+        font-size: 13px;
+        line-height: 1.6;
+        margin: 12px 0;
+        color: rgba(247, 245, 239, 0.8);
+      }
+
+      .marker-popup .author {
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(247, 245, 239, 0.15);
+        color: rgba(247, 245, 239, 0.9);
+      }
+
+      .marker-popup .author a {
+        color: #F7F5EF;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(247, 245, 239, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .marker-popup .author a:hover {
+        color: #fff;
+        border-bottom-color: #F7F5EF;
+      }
+
+      .leaflet-popup-tip {
+        background: rgba(18, 21, 18, 0.96);
+        border: 1px solid rgba(247, 245, 239, 0.2);
+        border-top: none;
+        border-left: none;
+      }
+
+      .leaflet-popup-close-button {
+        color: rgba(247, 245, 239, 0.7) !important;
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        padding: 6px 10px !important;
+        transition: color 0.3s ease;
+      }
+
+      .leaflet-popup-close-button:hover {
+        color: #F7F5EF !important;
+      }
+
+      /* Responsive */
       @media (max-width: 768px) {
+        .map-container {
+          top: 70px;
+        }
+
         .info-badge {
-          bottom: 15px;
-          right: 15px;
-          max-width: 300px;
-          padding: 10px 12px;
+          bottom: 18px;
+          right: 18px;
+          max-width: 320px;
+          padding: 14px 18px;
+        }
+
+        .info-icon {
+          font-size: 28px;
+        }
+
+        .info-ai {
+          font-size: 13px;
+        }
+
+        .marker-popup {
+          padding: 16px 18px;
+        }
+
+        .marker-popup h3 {
+          font-size: 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .map-container {
+          top: 60px;
+        }
+
+        .info-badge {
+          bottom: 12px;
+          right: 12px;
+          max-width: 280px;
+          padding: 12px 14px;
+        }
+
+        .info-badge-content {
+          gap: 10px;
         }
 
         .info-icon {
@@ -325,69 +516,20 @@ import '../styles/global.css';
           font-size: 12px;
         }
 
-              .badge-version {
-        font-size: 10px;
-        opacity: 0.7;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        display: block;
-        margin-top: 4px;
-      }
-
-      .badge-version {
-        font-size: 10px;
-        opacity: 0.7;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        display: block;
-        margin-top: 4px;
-      }
-
-      .info-source {
-          font-size: 10px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .info-badge {
-          bottom: 10px;
-          right: 10px;
-          max-width: 280px;
-          padding: 8px 10px;
-        }
-
-        .info-badge-content {
-          gap: 8px;
-        }
-
-        .info-icon {
-          font-size: 20px;
-        }
-
-        .info-ai {
+        .info-source {
           font-size: 11px;
         }
 
-              .badge-version {
-        font-size: 10px;
-        opacity: 0.7;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        display: block;
-        margin-top: 4px;
-      }
+        .marker-popup {
+          padding: 14px 16px;
+        }
 
-      .badge-version {
-        font-size: 10px;
-        opacity: 0.7;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        display: block;
-        margin-top: 4px;
-      }
+        .marker-popup h3 {
+          font-size: 15px;
+        }
 
-      .info-source {
-          font-size: 9px;
+        .marker-popup .quote {
+          font-size: 14px;
         }
       }
     </style>

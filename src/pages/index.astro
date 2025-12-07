@@ -1,948 +1,410 @@
----
-// index.astro - Главная страница (лендинг)
-import '../styles/global.css';
-import { SITE_VERSION } from '../config';
+﻿---
+import "../styles/global.css";
+import { SITE_VERSION } from "../config";
 ---
 
 <!doctype html>
 <html lang="ru">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Фронтовые Дневники ВОВ - Интерактивная карта</title>
-    <meta name="description" content="Интерактивная карта дневников фронтовиков Великой Отечественной войны">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Roboto+Slab:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Интерактивная карта дневников фронтовиков Великой Отечественной войны" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Roboto+Slab:wght@400;600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <!-- Предупреждение для мобильных -->
-    <div class="mobile-warning" id="mobileWarning">
-      <div class="warning-content">
-        <span class="warning-close" id="warningClose">✕</span>
-        <p>💻 Для лучшего опыта рекомендуется просматривать на ПК</p>
-      </div>
-    </div>
-
-    <div class="landing-page">
-      <div class="landing-content">
-        <div class="landing-icon">📜</div>
-        <h1 class="landing-title">Фронтовые Дневники</h1>
-        <p class="landing-subtitle">Великой Отечественной войны 1941-1945</p>
-        
-        <div class="landing-divider-small"></div>
-        
-        <div class="splash-info">
-          <p class="splash-author">Проект создан</p>
-          <p class="splash-name">ИСУ: 501671</p>
-          <!-- <p class="splash-course">Домашнее задание по дисциплине<br>"Россия в истории современных международных отношений" от 29.11.2025</p> -->
+    <main class="page-shell">
+      <section class="split hero-panel">
+        <div class="hero-overlay">
+          <p class="hero-kicker">Интерактивная карта</p>
+          <h1 class="hero-title">Фронтовые дневники</h1>
+          <p class="hero-subtitle">Блокада Ленинграда 1941–1945</p>
+          <a href="/map" class="cta-button">Перейти к карте</a>
         </div>
-        
-        <div class="landing-buttons">
-          <a href="/map" class="landing-button primary">
-            🗺️ Открыть карту
-          </a>
-          <a href="/all-sources" class="landing-button secondary">
-            📚 Используемые источники
+      </section>
+
+      <section class="split info-panel">
+        <div class="info-top">
+          <div class="logo-wrap">
+            <img src="/assets/logos/itmo-logo-white.png" alt="Университет ИТМО" class="logo-itmo" />
+          </div>
+          <a class="sources-button" href="/all-sources">
+            <span class="sources-logo"></span>
+            <span class="sources-text">Используемые источники</span>
           </a>
         </div>
 
-        
+        <div class="info-card">
+          <p class="info-card-title">Только образовательные цели</p>
+          <p class="info-card-body">
+            Проект создан исключительно в образовательных целях. Контент основан на дневниках участников и свидетелей блокады Ленинграда. Информация будет постепенно дополняться.
+          </p>
+        </div>
 
-        <!-- Выпадающие контакты -->
-        <button class="contacts-toggle" id="contactsToggle">
-          📧 Контакты для связи
-        </button>
-      
-        <div class="contacts-dropdown" id="contactsDropdown" style="display: none;">
-          <div class="contact-links">
-            <a href="mailto:s501671@niuitmo.ru" class="contact-link email-link">
-              <span class="contact-icon">✉️</span>
-              <span>s501671@niuitmo.ru</span>
-            </a>
-            <a href="https://t.me/sharky_a" target="_blank" rel="noopener noreferrer" class="contact-link telegram-link">
-              <span class="contact-icon">📱</span>
-              <span>@sharky_a</span>
-            </a>
+        <div class="contacts-card">
+          <p class="contacts-title">Связаться</p>
+          <div class="contact-row">
+            <span class="contact-icon">✉️</span>
+            <a href="mailto:s501671@niuitmo.ru">s501671@niuitmo.ru</a>
+          </div>
+          <div class="contact-row">
+            <span class="contact-icon">💬</span>
+            <a href="https://t.me/sharky_a" target="_blank" rel="noopener noreferrer">@sharky_a</a>
           </div>
         </div>
-        
-        <!-- Информация о добавлении контента -->
-        <div class="info-notice">
-          <p class="info-icon">📝</p>
-          <p class="info-message">Информация всё ещё добавляется</p>
-        </div>
 
-        <!-- Желтая плашка с предупреждением -->
-        <div class="splash-disclaimer">
-          <p class="disclaimer-text">⚠️ Исключительно для учебных целей</p>
-          <p class="disclaimer-subtext">Коммерческое использование запрещено</p>
-        </div>
-
-        <!-- AI Badge -->
-        <div class="landing-badge">
-          🤖 Создано с использованием ИИ • v{SITE_VERSION}
-        </div>
-      </div>
-    </div>
-
-    <script>
-      // Проверка мобильного устройства
-      function isMobileDevice() {
-        const userAgent = navigator.userAgent || navigator.vendor || '';
-        return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
-      }
-
-      // Показать предупреждение для мобильных
-      window.addEventListener('DOMContentLoaded', () => {
-        const mobileWarning = document.getElementById('mobileWarning') as HTMLElement | null;
-        const warningClose = document.getElementById('warningClose');
-        
-        if (isMobileDevice() && mobileWarning) {
-          mobileWarning.style.display = 'flex';
-        }
-        
-        if (warningClose) {
-          warningClose.addEventListener('click', () => {
-            if (mobileWarning) {
-              mobileWarning.style.display = 'none';
-            }
-          });
-        }
-
-        // Обработка выпадающих контактов
-        const contactsToggle = document.getElementById('contactsToggle') as HTMLElement | null;
-        const contactsDropdown = document.getElementById('contactsDropdown') as HTMLElement | null;
-        const contactsClose = document.getElementById('contactsClose');
-
-        if (contactsToggle && contactsDropdown) {
-          contactsToggle.addEventListener('click', () => {
-            if (contactsDropdown.style.display === 'none') {
-              contactsDropdown.style.display = 'block';
-              contactsToggle.classList.add('active');
-            } else {
-              contactsDropdown.style.display = 'none';
-              contactsToggle.classList.remove('active');
-            }
-          });
-
-          // Закрыть при клике вне
-          document.addEventListener('click', (e) => {
-            const target = e.target as Node | null;
-            if (target && contactsToggle && contactsDropdown) {
-              if (!contactsToggle.contains(target) && !contactsDropdown.contains(target)) {
-                contactsDropdown.style.display = 'none';
-                contactsToggle.classList.remove('active');
-              }
-            }
-          });
-        }
-      });
-    </script>
+        <div class="info-footer">🤖 Создано с использованием ИИ • v{SITE_VERSION}</div>
+      </section>
+    </main>
 
     <style>
-      /* Reset */
+      :root {
+        --bg-dark: #0f1310;
+        --khaki: #8b9d6f;
+        --khaki-dark: #556b2f;
+        --paper: #e9dfc7;
+        --ink: #1c1c1c;
+        --muted: #c7c0ae;
+      }
+
       * {
-        margin: 0;
-        padding: 0;
         box-sizing: border-box;
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        line-height: 1.6;
-        color: #1A1A1A;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg-dark);
+        color: #f4f1e8;
       }
 
-      /* Landing Page Styles */
-      .landing-page {
-        min-height: 100vh;
-        width: 100%;
-        background: linear-gradient(135deg, #8B9D6F 0%, #556B2F 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow-y: auto;
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
+      a {
+        color: inherit;
       }
 
-      .landing-content {
-        text-align: center;
-        color: #F5F5DC;
-        padding: 40px 20px;
-        max-width: 800px;
-        margin: 0 auto;
+      .page-shell {
         min-height: 100vh;
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        animation: fadeInUp 1s ease-out;
+        flex-direction: row;
+        background: radial-gradient(circle at 20% 20%, rgba(139, 157, 111, 0.12), transparent 35%),
+          radial-gradient(circle at 80% 10%, rgba(85, 107, 47, 0.15), transparent 40%),
+          linear-gradient(135deg, #0f1310 0%, #11160f 60%, #0c0f0c 100%);
       }
 
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .landing-icon {
-        font-size: 80px;
-        margin-bottom: 20px;
-        animation: pulse 2s ease-in-out infinite;
-      }
-
-      @keyframes pulse {
-        0%, 100% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.1);
-        }
-      }
-
-      .landing-title {
-        font-family: 'Roboto Slab', serif;
-        font-size: 48px;
-        font-weight: 700;
-        margin: 0 0 10px 0;
-        letter-spacing: 0.05em;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      }
-
-      .landing-subtitle {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        font-size: 24px;
-        font-weight: 400;
-        margin: 0 0 30px 0;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        opacity: 0.9;
-      }
-
-      .landing-divider {
-        width: 100px;
-        height: 3px;
-        background: #F5F5DC;
-        margin: 30px auto;
-        border-radius: 2px;
-      }
-
-      .landing-info {
-        margin-top: 30px;
-      }
-
-      .splash-author {
-        font-size: 18px;
-        margin: 0 0 8px 0;
-        opacity: 0.9;
-        font-style: italic;
-      }
-
-      .splash-name {
-        font-size: 26px;
-        font-weight: 700;
-        margin: 8px 0;
-        letter-spacing: 0.05em;
-      }
-
-      .splash-course {
-        font-size: 16px;
-        margin: 20px 0 0 0;
-        opacity: 0.9;
-        line-height: 1.7;
-        font-style: italic;
-      }
-
-      .splash-info {
-        margin: 25px 0;
-      }
-
-      .splash-disclaimer {
-        margin: 25px auto;
-        padding: 18px 24px;
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        border-radius: 8px;
-        border: 2px solid #FFD700;
-        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
-        max-width: 500px;
-      }
-
-      .disclaimer-text {
-        font-size: 17px;
-        font-weight: 700;
-        margin: 0 0 8px 0;
-        color: #1A1A1A;
-      }
-
-      .disclaimer-subtext {
-        font-size: 15px;
-        margin: 0;
-        color: #1A1A1A;
-        font-weight: 500;
-      }
-
-      .landing-contacts {
-        margin-top: 25px;
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        backdrop-filter: blur(5px);
-      }
-
-      .contacts-title {
-        font-size: 14px;
-        font-weight: 600;
-        margin: 0 0 15px 0;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        opacity: 0.9;
-      }
-
-      .contact-links {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .contact-link {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 15px;
-        background: rgba(255, 215, 0, 0.15);
-        border: 2px solid rgba(255, 215, 0, 0.3);
-        border-radius: 6px;
-        color: #F5F5DC;
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-      }
-
-      .contact-link:hover {
-        background: rgba(255, 215, 0, 0.25);
-        border-color: #FFD700;
-        transform: translateX(5px);
-      }
-
-      .contact-icon {
-        font-size: 20px;
-        flex-shrink: 0;
-      }
-
-      .email-link:hover {
-        box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-      }
-
-      .telegram-link:hover {
-        box-shadow: 0 0 15px rgba(0, 136, 204, 0.4);
-      }
-
-      .landing-buttons {
-        margin-top: 40px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        align-items: center;
-      }
-
-      .landing-button {
-        padding: 14px 32px;
-        border: none;
-        border-radius: 8px;
-        font-family: 'Roboto Slab', serif;
-        font-size: 16px;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        text-transform: uppercase;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        min-width: 250px;
-        justify-content: center;
-      }
-
-      .landing-button.primary {
-        background: #FFD700;
-        color: #1A1A1A;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        animation: buttonPulse 2s ease-in-out infinite;
-      }
-
-      @keyframes buttonPulse {
-        0%, 100% {
-          transform: scale(1);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-        50% {
-          transform: scale(1.05);
-          box-shadow: 0 6px 16px rgba(255, 215, 0, 0.5);
-        }
-      }
-
-      .landing-button.primary:hover {
-        background: #FFC700;
-        transform: scale(1.08);
-        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
-      }
-
-      .landing-button.secondary {
-        background: rgba(255, 255, 255, 0.1);
-        color: #F5F5DC;
-        border: 2px solid rgba(255, 215, 0, 0.5);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      }
-
-      .landing-button.secondary:hover {
-        background: rgba(255, 215, 0, 0.2);
-        border-color: #FFD700;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
-      }
-
-      .landing-button:active {
-        transform: scale(0.98);
-      }
-
-      .landing-badge {
-        margin-top: 40px;
-        padding: 10px 20px;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: 20px;
-        font-size: 12px;
-        opacity: 0.8;
-        display: inline-block;
-        line-height: 1.5;
-      }
-
-      .badge-version {
-        font-size: 10px;
-        opacity: 0.7;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-      }
-
-      /* Responsive */
-      @media (max-width: 768px) {
-        .landing-content {
-          padding: 30px 20px;
-        }
-
-        .landing-icon {
-          font-size: 60px;
-        }
-
-        .landing-title {
-          font-size: 32px;
-        }
-
-        .landing-subtitle {
-          font-size: 18px;
-        }
-
-        .splash-name {
-          font-size: 22px;
-        }
-
-        .splash-course {
-          font-size: 14px;
-        }
-
-        .landing-button {
-          font-size: 14px;
-          padding: 12px 24px;
-          min-width: 220px;
-        }
-
-        .splash-disclaimer {
-          padding: 15px 20px;
-          margin: 20px auto;
-        }
-
-        .disclaimer-text {
-          font-size: 15px;
-        }
-
-        .disclaimer-subtext {
-          font-size: 13px;
-        }
-
-        .landing-contacts {
-          padding: 15px;
-        }
-
-        .contacts-title {
-          font-size: 13px;
-        }
-
-        .contact-link {
-          font-size: 13px;
-          padding: 8px 12px;
-        }
-
-        .contact-icon {
-          font-size: 18px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .landing-content {
-          padding: 30px 15px;
-          min-height: auto;
-          justify-content: flex-start;
-          padding-top: 50px;
-          padding-bottom: 50px;
-        }
-
-        .landing-icon {
-          font-size: 50px;
-        }
-
-        .landing-title {
-          font-size: 26px;
-        }
-
-        .landing-subtitle {
-          font-size: 16px;
-        }
-
-        .splash-name {
-          font-size: 20px;
-        }
-
-        .splash-course {
-          font-size: 13px;
-        }
-
-        .splash-author {
-          font-size: 15px;
-        }
-
-        .landing-button {
-          font-size: 13px;
-          padding: 10px 20px;
-          min-width: 200px;
-        }
-
-        .splash-disclaimer {
-          padding: 14px 18px;
-          margin: 20px auto;
-        }
-
-        .disclaimer-text {
-          font-size: 14px;
-        }
-
-        .disclaimer-subtext {
-          font-size: 12px;
-        }
-
-        .landing-contacts {
-          padding: 12px;
-          margin-top: 20px;
-        }
-
-        .contacts-title {
-          font-size: 12px;
-          margin-bottom: 12px;
-        }
-
-        .contact-link {
-          font-size: 12px;
-          padding: 8px 10px;
-          gap: 8px;
-        }
-
-        .contact-icon {
-          font-size: 16px;
-        }
-
-        .landing-badge {
-          font-size: 11px;
-          padding: 8px 16px;
-          margin-top: 30px;
-        }
-      }
-
-      /* Mobile Warning Styles */
-      .mobile-warning {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(135deg, #8B9D6F 0%, #556B2F 100%);
-        color: #F5F5DC;
-        padding: 12px 16px;
-        z-index: 1100;
-        display: none;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        animation: slideDown 0.3s ease-out;
-      }
-
-      @keyframes slideDown {
-        from {
-          transform: translateY(-100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-
-      .warning-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        flex: 1;
-      }
-
-      .mobile-warning p {
-        margin: 0;
-        font-size: 14px;
-        flex: 1;
-      }
-
-      .warning-close {
-        cursor: pointer;
-        font-size: 18px;
-        color: #F5F5DC;
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
-        padding: 4px 8px;
-        border-radius: 3px;
-        transition: background 0.2s;
-      }
-
-      .warning-close:hover {
-        background: rgba(255, 255, 255, 0.2);
-      }
-
-      /* Compact Info Styles */
-      .landing-info-compact {
-        margin: 20px 0;
-        text-align: center;
-      }
-
-      .info-line {
-        font-size: 15px;
-        margin: 8px 0;
-        opacity: 0.95;
-      }
-
-      .landing-divider-small {
-        width: 60px;
-        height: 2px;
-        background: #F5F5DC;
-        margin: 15px auto;
-        border-radius: 1px;
-        opacity: 0.6;
-      }
-
-      .landing-disclaimer-compact {
-        margin-top: 15px;
-        padding: 10px 15px;
-        background: rgba(85, 107, 47, 0.2);
-        border-left: 3px solid #FFD700;
-        border-radius: 3px;
-      }
-
-      .landing-disclaimer-compact p {
-        margin: 0;
-        font-size: 13px;
-        opacity: 0.9;
-      }
-
-      /* Contacts Toggle & Dropdown */
-      .contacts-toggle {
-        background: linear-gradient(135deg, #8B9D6F 0%, #556B2F 100%);
-        color: #F5F5DC;
-        border: 2px solid #F5F5DC;
-        padding: 12px 24px;
-        margin: 20px auto;
-        font-size: 15px;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        font-weight: 500;
-      }
-
-      .contacts-toggle:hover {
-        background: linear-gradient(135deg, #556B2F 0%, #8B9D6F 100%);
-        transform: scale(1.05);
-      }
-
-      .contacts-toggle.active {
-        background: linear-gradient(135deg, #556B2F 0%, #8B9D6F 100%);
-        border-color: #FFD700;
-        box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
-      }
-
-      .contacts-dropdown {
-        background: rgba(85, 107, 47, 0.15);
-        border: 2px solid rgba(139, 157, 111, 0.4);
-        border-radius: 4px;
-        padding: 20px;
-        margin: 15px auto;
-        max-width: 400px;
-        animation: slideIn 0.3s ease-out;
+      .split {
+        width: 50%;
+        min-height: 100vh;
         position: relative;
       }
 
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      .hero-panel {
+        background-image: linear-gradient(120deg, rgba(12, 15, 12, 0.7), rgba(12, 15, 12, 0.3)),
+          radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05), transparent 45%),
+          repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.04) 0, rgba(255, 255, 255, 0.04) 2px, transparent 2px, transparent 6px),
+          linear-gradient(135deg, #4a4a42 0%, #2f2d27 40%, #1d1b16 100%);
+        background-size: cover;
+        background-position: center;
+        display: grid;
+        place-items: center;
+        isolation: isolate;
       }
 
-      .contacts-close {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background: none;
-        border: none;
-        color: #F5F5DC;
-        font-size: 20px;
-        cursor: pointer;
-        padding: 4px;
-        transition: color 0.2s;
+      .hero-overlay {
+        width: min(520px, 80%);
+        padding: 38px 34px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: linear-gradient(120deg, rgba(24, 30, 22, 0.8), rgba(18, 22, 18, 0.6));
+        backdrop-filter: blur(4px);
+        border-radius: 14px;
+        box-shadow: 0 22px 50px rgba(0, 0, 0, 0.4);
+        text-align: center;
       }
 
-      .contacts-close:hover {
-        color: #FFD700;
+      .hero-kicker {
+        margin: 0 0 10px 0;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-size: 13px;
+        color: var(--muted);
       }
 
-      .contact-links {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-top: 8px;
+      .hero-title {
+        margin: 0;
+        font-family: "Roboto Slab", serif;
+        font-size: 40px;
+        letter-spacing: 0.08em;
+        color: #f8f5ec;
+        text-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
       }
 
-      .contact-link {
+      .hero-subtitle {
+        margin: 10px 0 24px 0;
+        font-size: 16px;
+        opacity: 0.95;
+        letter-spacing: 0.08em;
+        color: #ede8db;
+      }
+
+      .cta-button {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-        padding: 12px 16px;
-        background: rgba(139, 157, 111, 0.2);
-        border: 1px solid rgba(139, 157, 111, 0.4);
-        border-radius: 3px;
-        color: #F5F5DC;
+        justify-content: center;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #74835a 0%, #556b2f 100%);
+        color: #0b0e0b;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        border-radius: 999px;
         text-decoration: none;
-        transition: all 0.3s ease;
-        font-size: 14px;
+        box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
 
-      .contact-link:hover {
-        background: rgba(255, 215, 0, 0.15);
-        border-color: #FFD700;
-        color: #FFD700;
+      .cta-button:hover {
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 16px 30px rgba(0, 0, 0, 0.42);
       }
 
-      .contact-icon {
-        font-size: 18px;
+      .info-panel {
+        background: linear-gradient(180deg, rgba(18, 21, 18, 0.95) 0%, rgba(12, 14, 12, 0.98) 100%);
+        padding: 40px 48px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
       }
 
-      /* Info Notice Styles */
-      .info-notice {
-        margin: 20px auto;
-        padding: 14px 20px;
-        background: linear-gradient(135deg, rgba(139, 157, 111, 0.3) 0%, rgba(85, 107, 47, 0.2) 100%);
-        border: 2px solid rgba(139, 157, 111, 0.5);
-        border-radius: 6px;
+      .info-top {
         display: flex;
         align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .logo-wrap {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 10px 14px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
         justify-content: center;
-        gap: 12px;
-        max-width: 400px;
-        animation: fadeIn 0.5s ease-out;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+        position: relative;
+        cursor: pointer;
+        perspective: 1000px;
+        min-width: 160px;
+        min-height: 60px;
       }
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-5px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .info-icon {
-        font-size: 24px;
-        margin: 0;
-        animation: pulse 2s ease-in-out infinite;
+      .logo-itmo {
+        height: 40px;
+        width: auto;
+        display: block;
+        animation: pulse 1s ease-in-out infinite;
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        filter: drop-shadow(0 4px 12px rgba(139, 157, 111, 0.4));
       }
 
       @keyframes pulse {
         0%, 100% {
+          filter: drop-shadow(0 4px 12px rgba(139, 157, 111, 0.5)) brightness(1);
           transform: scale(1);
         }
         50% {
-          transform: scale(1.1);
+          filter: drop-shadow(0 8px 28px rgba(139, 157, 111, 0.9)) brightness(1.25);
+          transform: scale(1.03);
         }
       }
 
-      .info-message {
-        font-size: 15px;
-        font-weight: 500;
-        color: #F5F5DC;
+      .logo-wrap::before {
+        content: "Автор: ИСУ 501671";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotateY(180deg);
+        opacity: 0;
+        font-size: 13px;
+        font-weight: 700;
+        color: #F7F5EF;
+        white-space: nowrap;
+        pointer-events: none;
+        letter-spacing: 0.05em;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        transition: opacity 0.3s ease 0.15s;
+      }
+
+      .logo-wrap:hover .logo-itmo {
+        transform: rotateY(180deg);
+        opacity: 0;
+      }
+
+      .logo-wrap:hover::before {
+        transform: translate(-50%, -50%) rotateY(0deg);
+        opacity: 1;
+      }
+
+      .sources-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 14px 20px;
+        border-radius: 14px;
+        background-image:
+          linear-gradient(135deg, rgba(18, 21, 18, 0.72), rgba(12, 14, 12, 0.82)),
+          url("/assets/logos/phozhito-logo.png");
+        background-size: cover;
+        background-position: center;
+        background-blend-mode: multiply;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        text-decoration: none;
+        color: #F7F5EF;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+      }
+
+      .sources-button::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.12), transparent 45%);
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      .sources-logo {
+        display: none;
+      }
+
+      .sources-text {
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+      }
+
+      .info-card {
+        background: radial-gradient(circle at 15% 20%, rgba(233, 223, 199, 0.18), transparent 55%),
+          linear-gradient(120deg, rgba(31, 28, 22, 0.95), rgba(24, 22, 18, 0.92));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 24px 22px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 16px 36px rgba(0, 0, 0, 0.35);
+      }
+
+      .info-card-title {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .info-card-body {
         margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        line-height: 1.6;
+        color: #e5e0d4;
       }
 
-      /* Responsive adjustments */
-      @media (max-width: 768px) {
-        .mobile-warning {
-          padding: 10px 12px;
-        }
-
-        .mobile-warning p {
-          font-size: 12px;
-        }
-
-        .warning-close {
-          font-size: 16px;
-          padding: 3px 6px;
-        }
-
-        .info-line {
-          font-size: 13px;
-        }
-
-        .info-notice {
-          padding: 12px 18px;
-          margin: 15px auto;
-          max-width: calc(100% - 30px);
-        }
-
-        .info-icon {
-          font-size: 22px;
-        }
-
-        .info-message {
-          font-size: 14px;
-        }
-
-        .contacts-toggle {
-          padding: 10px 20px;
-          font-size: 14px;
-        }
-
-        .contact-link {
-          font-size: 13px;
-          padding: 10px 14px;
-          gap: 8px;
-        }
-
-        .contact-icon {
-          font-size: 16px;
-        }
+      .contacts-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 18px 18px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
       }
 
-      @media (max-width: 480px) {
-        .mobile-warning {
+      .contacts-title {
+        margin: 0;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .contact-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+      }
+
+      .contact-row a {
+        text-decoration: none;
+        color: #f5f3ea;
+      }
+
+      .contact-row a:hover {
+        text-decoration: underline;
+      }
+
+      .contact-icon {
+        font-size: 16px;
+        opacity: 0.85;
+      }
+
+      .info-footer {
+        margin-top: auto;
+        padding: 12px 16px;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 13px;
+        letter-spacing: 0.03em;
+      }
+
+      @media (max-width: 1024px) {
+        .page-shell {
           flex-direction: column;
-          padding: 12px;
-          gap: 8px;
         }
 
-        .warning-content {
-          flex-direction: column;
+        .split {
           width: 100%;
+          min-height: 60vh;
         }
 
-        .mobile-warning p {
-          font-size: 11px;
-          text-align: center;
+        .info-panel {
+          min-height: auto;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .hero-overlay {
+          padding: 26px 22px;
         }
 
-        .landing-info-compact {
-          margin: 15px 0;
+        .hero-title {
+          font-size: 32px;
         }
 
-        .info-line {
-          font-size: 12px;
-          margin: 6px 0;
+        .hero-subtitle {
+          font-size: 15px;
         }
 
-        .info-notice {
-          padding: 10px 15px;
-          margin: 12px auto;
+        .info-panel {
+          padding: 28px 22px;
+        }
+
+        .info-top {
           flex-direction: column;
-          gap: 8px;
+          align-items: flex-start;
+          gap: 12px;
         }
 
-        .info-icon {
-          font-size: 20px;
+        .sources-button {
+          width: 100%;
+          justify-content: center;
         }
 
-        .info-message {
-          font-size: 13px;
-          text-align: center;
-        }
-
-        .landing-divider-small {
-          width: 50px;
-          margin: 12px auto;
-        }
-
-        .landing-disclaimer-compact {
-          margin-top: 12px;
-          padding: 8px 12px;
-        }
-
-        .landing-disclaimer-compact p {
-          font-size: 12px;
-        }
-
-        .contacts-toggle {
-          padding: 10px 18px;
-          font-size: 13px;
-          margin: 15px auto;
-        }
-
-        .contacts-dropdown {
-          margin: 10px auto;
-          padding: 15px;
-          max-width: calc(100% - 30px);
-        }
-
-        .contacts-close {
-          font-size: 18px;
-          top: 6px;
-          right: 6px;
-        }
-
-        .contact-link {
-          font-size: 12px;
-          padding: 10px 12px;
-          gap: 8px;
-        }
-
-        .contact-icon {
-          font-size: 16px;
+        .logo-itmo {
+          height: 34px;
         }
       }
     </style>
